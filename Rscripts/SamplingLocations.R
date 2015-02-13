@@ -30,17 +30,27 @@ UTM$Yr3 = as.character(UTM$Year3)
 UTMsampleYear <- UTM %>%
   filter(Year1 == sampleYear | Year2 == sampleYear | Year3 == sampleYear ) %>%
   mutate(YearsSampled = paste(Yr1, Yr2, Yr3, sep = ', ')) %>%
-  select(-Year1:-Prelim, -Yr1:-Yr3)
+  select(-Station, -Year1:-Yr3, -Easting) %>%
+  arrange(Unit, Habitat) 
+
+UTMsampleYear <- tbl_df(UTMsampleYear) %>%
+  group_by(Owner, Unit, Habitat, YearsSampled, count = n()) 
+
+
+   
   
+
+
+
+UTMsampleYear$YearsSampled <- gsub(', NA', '', UTMsampleYear$YearsSampled)
 
 #########################################################################################################
 options('ReporteRs-fontsize'=11, 'ReporteRs-default-font'='Times New Roman')
 #########################################################################################################
 
 
-
-reportout = docx()
-reportout = addSection( reportout, landscape = FALSE)
-reportout = addFlexTable(reportout, vanilla.table(UTMsampleYear))
-#reportout = addSection( reportout )
-writeDoc( reportout, file = "Sampling.docx")
+reportout = docx(template = "Annual Progress Report 2014.docx") %>%
+#  addSection( landscape = FALSE) %>%
+  addFlexTable( vanilla.table(UTMsampleYear), bookmark = "Table1", add.rownames = FALSE,
+                body.cell.props = parLeft) %>%
+  writeDoc( file = "Report2015.docx")
