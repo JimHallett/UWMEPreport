@@ -35,8 +35,6 @@ UTMsampleYear <- UTM %>%
   group_by(Owner, Unit, Habitat, YearsSampled) %>%
   count(Owner, Unit, Habitat, YearsSampled)
 
-
-
 UTMsampleYear$YearsSampled <- gsub(', NA', '', UTMsampleYear$YearsSampled)
 
 #########################################################################################################
@@ -46,37 +44,32 @@ options('ReporteRs-fontsize'=11, 'ReporteRs-default-font'='Times New Roman')
 
 reportout = docx(template = "Annual Progress Report 2014.docx") 
 
-
+########################################################################################################
+## Table 1
+########################################################################################################
 
 Table1 <-   FlexTable(UTMsampleYear, header.columns = FALSE)
 
 Table1 = addHeaderRow(Table1, 
-                      value = c( "Owner", "Management unit", "Habitat", "Years sampled", "Number of sampling points"),
-                     cell.properties = cellProperties(padding.bottom = 3, padding.top = 3))
-
+          value = c( "Owner", "Management unit", "Habitat", "Years sampled", "Number of sampling points"),
+          cell.properties = cellProperties(padding.bottom = 3, padding.top = 3))
 
 setFlexTableBorders(Table1,inner.vertical=borderProperties(style = "none"),
                     inner.horizontal=borderProperties(style = "none"),
                     outer.vertical=borderProperties(style = "none"),
                     outer.horizontal=borderProperties(),
                     body=TRUE,header=TRUE,footer=FALSE)
+
 spanFlexTableRows(Table1, j = "Owner", runs = as.character( UTMsampleYear$Owner ) )
 
 Table1[, 1:4] <-   parProperties(text.align = "left")
 Table1[, 5] <-   parProperties(text.align = "center")
-
-
-
-
-#Table1 <- borderNone()
 Table1 <-   setZebraStyle(Table1, odd = '#eeeeee', even = 'white' ) 
+
+
+########################################################################################################
+# Output the report
+########################################################################################################
 
 reportout = addFlexTable(reportout, Table1, bookmark = "Table1") 
   writeDoc( reportout, file = "Report2015.docx", par.properties = parProperties(text.align = "center"),)
-
-# 
-# reportout = docx(template = "Annual Progress Report 2014.docx") %>%
-#   # addSection( landscape = FALSE) %>%
-#   addFlexTable( vanilla.table(UTMsampleYear), bookmark = "Table1", add.rownames = FALSE,
-#                 body.cell.props = parLeft) %>%
-#   writeDoc( file = "Report2015.docx")
