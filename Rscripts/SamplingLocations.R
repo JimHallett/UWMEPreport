@@ -1,4 +1,4 @@
-library(plyr)
+#library(plyr)
 library(tidyr)
 library(dplyr)
 library("RODBC")
@@ -18,18 +18,32 @@ sampleYear = 2014
 
 channel <- odbcConnect("discountasp", uid = "SQL2008_508574_uwmep_user", pwd = "Manis9") #this creates a connection to the database and reads the server from discountasp.dsn, and provides user credentials.
 
-UTM <-sqlFetch(channel, "UTMs")  # read data from SQL database
+mammals <- sqlFetch(channel, "Mammal view") 
 
-glimpse(UTM)
+UTM <-sqlFetch(channel, "UTMs")  # read UTM data from SQL database
 
-UTM$Yr1 = as.character(UTM$Year1)
-UTM$Yr2 = as.character(UTM$Year2)
-UTM$Yr3 = as.character(UTM$Year3)
+close(channel)
+########################################################################################
+#  code for table 1 - uncomment later
+########################################################################################
+# UTM$Yr1 = as.character(UTM$Year1)
+# UTM$Yr2 = as.character(UTM$Year2)
+# UTM$Yr3 = as.character(UTM$Year3)
 
+# UTMsampleYear <- UTM %>%
+#   filter(Year1 == sampleYear | Year2 == sampleYear | Year3 == sampleYear ) %>%
+#   mutate(YearsSampled = paste(Yr1, Yr2, Yr3, sep = ', ')) %>%
+#   select(-Station, -Year1:-Yr3, -Easting) %>%
+#   arrange(Unit, Habitat) %>%
+#   group_by(Owner, Unit, Habitat, YearsSampled) %>%
+#   count(Owner, Unit, Habitat, YearsSampled)
+# 
+# UTMsampleYear$YearsSampled <- gsub(', NA', '', UTMsampleYear$YearsSampled)
+########################################################################################
 
-UTMsampleYear <- UTM %>%
-  filter(Year1 == sampleYear | Year2 == sampleYear | Year3 == sampleYear ) %>%
-  mutate(YearsSampled = paste(Yr1, Yr2, Yr3, sep = ', ')) %>%
+mammalsampleYear <- mammals %>%
+  filter(year(Date) == sampleYear) 
+  
   select(-Station, -Year1:-Yr3, -Easting) %>%
   arrange(Unit, Habitat) %>%
   group_by(Owner, Unit, Habitat, YearsSampled) %>%
