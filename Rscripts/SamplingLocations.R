@@ -32,7 +32,8 @@ UTMsampleYear <- UTM %>%
   mutate(YearsSampled = paste(Yr1, Yr2, Yr3, sep = ', ')) %>%
   select(-Station, -Year1:-Yr3, -Easting) %>%
   arrange(Unit, Habitat) %>%
-  group_by(Owner, Unit, Habitat, YearsSampled)
+  group_by(Owner, Unit, Habitat, YearsSampled) %>%
+  count(Unit, Habitat)
 
 
 
@@ -45,15 +46,14 @@ options('ReporteRs-fontsize'=11, 'ReporteRs-default-font'='Times New Roman')
 
 reportout = docx(template = "Annual Progress Report 2014.docx") 
 
-Table1 <-   vanilla.table(UTMsampleYear)
-Table1 <-  setZebraStyle(Table1, odd = '#eeeeee', even = 'white' ) 
+#Table1 <- vanilla.table(UTMSampleYear,   add.rownames = FALSE)
+#Table1 <-   FlexTable(UTMsampleYear)
+Table1 <-   FlexTable(UTMsampleYear)
+Table1[, 1:6] <-   parProperties(text.align = "left")
+Table1 <-   setZebraStyle(Table1, odd = '#eeeeee', even = 'white' ) 
 
-            bookmark = "Table1", add.rownames = FALSE, body.cell.props = parLeft) 
-
-
-
-addFlexTable(Table1A) %>%
-  writeDoc( file = "Report2015.docx")
+reportout = addFlexTable(reportout, Table1, bookmark = "Table1") 
+  writeDoc( reportout, file = "Report2015.docx")
 
 # 
 # reportout = docx(template = "Annual Progress Report 2014.docx") %>%
