@@ -62,7 +62,7 @@ options('ReporteRs-fontsize'=11, 'ReporteRs-default-font'='Times New Roman')
 #########################################################################################################
 
 
-reportout = docx(template = "Annual Progress Report 2014.docx") 
+reportout = docx(template = "Annual Progress Report 2014.docx")        #Give the report a start
 
 ########################################################################################################
 ## Table 1
@@ -100,7 +100,9 @@ setFlexTableBorders(Table2,inner.vertical=borderProperties(style = "none"),
 
 Table2[, 1:2] <-   parProperties(text.align = "left")
 Table2[, 3:10] <-   parProperties(text.align = "center")
-Table2 <-   setZebraStyle(Table1, odd = '#eeeeee', even = 'white' ) 
+Table2 <-   setZebraStyle(Table2, odd = '#eeeeee', even = 'white' ) 
+
+
 
 ########################################################################################################
 # Output the report
