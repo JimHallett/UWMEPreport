@@ -23,25 +23,40 @@ mammals <- sqlFetch(channel, "Mammal view")
 UTM <-sqlFetch(channel, "UTMs")  # read UTM data from SQL database
 
 close(channel)
+
 #######################################################################################
-## code for table 1 Locations
+## code for table 1 Reference locations
 #######################################################################################
 UTM$Yr1 = as.character(UTM$Year1)
 UTM$Yr2 = as.character(UTM$Year2)
 UTM$Yr3 = as.character(UTM$Year3)
 
-UTMsampleYear <- UTM %>%
-  filter(Year1 == sampleYear | Year2 == sampleYear | Year3 == sampleYear ) %>%
+UTMsampleYear <- UTM %>%   #filter(Year1 == sampleYear | Year2 == sampleYear | Year3 == sampleYear ) %>%
+  filter(`Site type` == "Reference") %>%
   mutate(YearsSampled = paste(Yr1, Yr2, Yr3, sep = ', ')) %>%
   select(-Station, -Year1:-Yr3, -Easting) %>%
-  arrange(Unit, Habitat) %>%
-  group_by(Owner, Unit, Habitat, YearsSampled) %>%
-  count(Owner, Unit, Habitat, YearsSampled)
+  arrange(Habitat, Unit, Owner, YearsSampled) %>%
+  group_by(Habitat, Unit, Owner, YearsSampled) %>%
+  count(Habitat, Unit, Owner, YearsSampled)
 
 UTMsampleYear$YearsSampled <- gsub(', NA', '', UTMsampleYear$YearsSampled)     # Gets rid of NA strings
 
 #######################################################################################
-## code for table 2 Mammal captures
+## code for table 2 Permanent locations
+#######################################################################################
+
+UTMPsampleYear <- UTM %>%   #filter(Year1 == sampleYear | Year2 == sampleYear | Year3 == sampleYear ) %>%
+  filter(`Site type` == "Permanent") %>%
+  mutate(YearsSampled = paste(Yr1, Yr2, Yr3, sep = ', ')) %>%
+  select(-Station, -Year1:-Yr3, -Easting) %>%
+  arrange(Habitat, Unit, Owner, YearsSampled) %>%
+  group_by(Habitat, Unit, Owner, YearsSampled) %>%
+  count(Habitat, Unit, Owner, YearsSampled)
+
+UTMPsampleYear$YearsSampled <- gsub(', NA', '', UTMPsampleYear$YearsSampled)     # Gets rid of NA strings
+
+#######################################################################################
+## code for table  Mammal captures
 #######################################################################################
 
 
@@ -65,13 +80,13 @@ options('ReporteRs-fontsize'=11, 'ReporteRs-default-font'='Times New Roman')
 reportout = docx(template = "Annual Progress Report 2014.docx")        #Give the report a start
 
 ########################################################################################################
-## Table 1
+## Table 1 Reference points
 ########################################################################################################
 
 Table1 <-   FlexTable(UTMsampleYear, header.columns = FALSE)
 
 Table1 = addHeaderRow(Table1, 
-          value = c( "Owner", "Management unit", "Habitat", "Years sampled", "Number of sampling points"),
+          value = c( "Habitat", "Management unit", "Owner", "Years sampled", "Sampling points (n)"),
           cell.properties = cellProperties(padding.bottom = 3, padding.top = 3))
 
 setFlexTableBorders(Table1,inner.vertical=borderProperties(style = "none"),
@@ -80,17 +95,21 @@ setFlexTableBorders(Table1,inner.vertical=borderProperties(style = "none"),
                     outer.horizontal=borderProperties(),
                     body=TRUE,header=TRUE,footer=FALSE)
 
-spanFlexTableRows(Table1, j = "Owner", runs = as.character( UTMsampleYear$Owner ) )
+#spanFlexTableRows(Table1, j = "Owner", runs = as.character( UTMsampleYear$Owner ) )
 
 Table1[, 1:4] <-   parProperties(text.align = "left")
 Table1[, 5] <-   parProperties(text.align = "center")
 Table1 <-   setZebraStyle(Table1, odd = '#eeeeee', even = 'white' ) 
 
 ########################################################################################################
-## Table 2
+## Table 2 Permanent points
 ########################################################################################################
 
-Table2 <-   FlexTable(mammalsampleYear, header.columns = TRUE)
+Table2 <-   FlexTable(UTMPsampleYear, header.columns = FALSE)
+
+Table2 = addHeaderRow(Table2, 
+                      value = c( "Habitat", "Management unit", "Owner", "Years sampled", "Sampling points (n)"),
+                      cell.properties = cellProperties(padding.bottom = 3, padding.top = 3))
 
 setFlexTableBorders(Table2,inner.vertical=borderProperties(style = "none"),
                     inner.horizontal=borderProperties(style = "none"),
@@ -98,9 +117,27 @@ setFlexTableBorders(Table2,inner.vertical=borderProperties(style = "none"),
                     outer.horizontal=borderProperties(),
                     body=TRUE,header=TRUE,footer=FALSE)
 
-Table2[, 1:2] <-   parProperties(text.align = "left")
-Table2[, 3:10] <-   parProperties(text.align = "center")
+#spanFlexTableRows(Table2, j = "Owner", runs = as.character( UTMsampleYear$Owner ) )
+
+Table2[, 1:4] <-   parProperties(text.align = "left")
+Table2[, 5] <-   parProperties(text.align = "center")
 Table2 <-   setZebraStyle(Table2, odd = '#eeeeee', even = 'white' ) 
+
+########################################################################################################
+## Table mammals
+########################################################################################################
+
+TableMammal <-   FlexTable(mammalsampleYear, header.columns = TRUE)
+
+setFlexTableBorders(TableMammal,inner.vertical=borderProperties(style = "none"),
+                    inner.horizontal=borderProperties(style = "none"),
+                    outer.vertical=borderProperties(style = "none"),
+                    outer.horizontal=borderProperties(),
+                    body=TRUE,header=TRUE,footer=FALSE)
+
+TableMammal[, 1:2] <-   parProperties(text.align = "left")
+TableMammal[, 3:10] <-   parProperties(text.align = "center")
+TableMammal <-   setZebraStyle(TableMammal, odd = '#eeeeee', even = 'white' ) 
 
 
 
@@ -110,4 +147,5 @@ Table2 <-   setZebraStyle(Table2, odd = '#eeeeee', even = 'white' )
 
 reportout = addFlexTable(reportout, Table1, bookmark = "Table1") 
 reportout = addFlexTable(reportout, Table2, bookmark = "Table2") 
+reportout = addFlexTable(reportout, TableMammal, bookmark = "Mammals") 
   writeDoc( reportout, file = "Report2015.docx", par.properties = parProperties(text.align = "center"),)
