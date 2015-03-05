@@ -72,12 +72,7 @@ mammalsampleYear[is.na(mammalsampleYear)] <- 0                              # Re
 
 
 
-#########################################################################################################
-options('ReporteRs-fontsize'=11, 'ReporteRs-default-font'='Times New Roman')
-#########################################################################################################
 
-
-reportout = docx(template = "Annual Progress Report 2014.docx")        #Give the report a start
 
 ########################################################################################################
 ## Table 1 Reference points
@@ -140,11 +135,18 @@ TableMammal[, 3:10] <-   parProperties(text.align = "center")
 TableMammal <-   setZebraStyle(TableMammal, odd = '#eeeeee', even = 'white' ) 
 
 
+#########################################################################################################
+options('ReporteRs-fontsize'=11, 'ReporteRs-default-font'='Times New Roman')
+#########################################################################################################
+
+reportout = docx(template = "Annual Progress Report 2014.docx")        #Give the report a start
 
 ########################################################################################################
 # Output the report
 ########################################################################################################
+fig1 <- file.path( getwd(), "fig1.jpg")
 
+reportout <- addImage(reportout, fig1, bookmark = "Fig1", par.properties = parCenter() )
 reportout = addFlexTable(reportout, Table1, bookmark = "Table1") 
 reportout = addFlexTable(reportout, Table2, bookmark = "Table2") 
 reportout = addFlexTable(reportout, TableMammal, bookmark = "Mammals") 
