@@ -144,9 +144,16 @@ reportout = docx(template = "Annual Progress Report 2014.docx")        #Give the
 ########################################################################################################
 # Output the report
 ########################################################################################################
-fig1 <- file.path( getwd(), "fig1.jpg")
+fig1 <- file.path( getwd(), "SiteLocations65.jpg")
+fig2 <- file.path( getwd(), "KalWA2014crop.jpg")
+fig3 <- file.path( getwd(), "KalID2014crop.jpg")
+fig4 <- file.path( getwd(), "SpeciesComp65.jpg")
+fig5 <- file.path( getwd(), "fig5.jpg")
 
 reportout <- addImage(reportout, fig1, bookmark = "Fig1", par.properties = parCenter() )
+reportout <- addImage(reportout, fig2, bookmark = "Fig2", par.properties = parCenter() )
+reportout <- addImage(reportout, fig3, bookmark = "Fig3", par.properties = parCenter() )
+
 reportout = addFlexTable(reportout, Table1, bookmark = "Table1") 
 reportout = addFlexTable(reportout, Table2, bookmark = "Table2") 
 reportout = addFlexTable(reportout, TableMammal, bookmark = "Mammals") 
