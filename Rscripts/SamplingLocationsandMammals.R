@@ -72,6 +72,9 @@ mammalsampleYear[is.na(mammalsampleYear)] <- 0                              # Re
 
 
 
+#########################################################################################################
+options("ReporteRs-fontsize"=11, "ReporteRs-default-font"="Times New Roman")
+#########################################################################################################
 
 
 ########################################################################################################
@@ -135,9 +138,6 @@ TableMammal[, 3:10] <-   parProperties(text.align = "center")
 TableMammal <-   setZebraStyle(TableMammal, odd = '#eeeeee', even = 'white' ) 
 
 
-#########################################################################################################
-options('ReporteRs-fontsize'=11, 'ReporteRs-default-font'='Times New Roman')
-#########################################################################################################
 
 reportout = docx(template = "Annual Progress Report 2014.docx")        #Give the report a start
 
@@ -150,8 +150,8 @@ fig3 <- file.path( getwd(), "KalID2014crop.jpg")
 fig4 <- file.path( getwd(), "SpeciesComp65.jpg")
 fig5 <- file.path( getwd(), "fig5.jpg")
 
-reportout <- addImage(reportout, fig1, width = 4.8, bookmark = "Fig1", par.properties = parCenter() )
-reportout <- addImage(reportout, fig2, width = 4.8, bookmark = "Fig2", par.properties = parCenter() )
+reportout <- addImage(reportout, fig1, ppi = 300, bookmark = "Fig1", par.properties = parCenter() )
+reportout <- addImage(reportout, fig2, ppi = 266, bookmark = "Fig2", par.properties = parCenter() )
 #reportout <- addImage(reportout, fig3, bookmark = "Fig3", par.properties = parCenter() )
 
 reportout = addFlexTable(reportout, Table1, bookmark = "Table1") 
