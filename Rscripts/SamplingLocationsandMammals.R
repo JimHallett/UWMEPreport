@@ -1,4 +1,3 @@
-#library(plyr)
 library(tidyr)
 library(dplyr)
 library("RODBC")
@@ -14,7 +13,7 @@ sampleYear = 2014
 #########################################################################################################
 # Open SQL channel and fetch
 #########################################################################################################
-
+sampleeffort <- read.csv(file="samplingeffort.csv", header=TRUE, sep=",")
 
 channel <- odbcConnect("discountasp", uid = "SQL2008_508574_uwmep_user", pwd = "Manis9") #this creates a connection to the database and reads the server from discountasp.dsn, and provides user credentials.
 
@@ -59,7 +58,6 @@ UTMPsampleYear$YearsSampled <- gsub(', NA', '', UTMPsampleYear$YearsSampled)    
 ## code for table  Mammal captures
 #######################################################################################
 
-
 mammalsampleYear <- mammals %>%
   filter(year(Date) == sampleYear) %>%
   select(-Owner, -Date, -Station, -Northing, -Easting, -`Common Name`, -Sex:-Year) %>%
@@ -69,7 +67,6 @@ mammalsampleYear <- mammals %>%
   spread('Scientific Name', n)
 
 mammalsampleYear[is.na(mammalsampleYear)] <- 0                              # Replace NA with 0 throughout
-
 
 
 #########################################################################################################
@@ -121,6 +118,28 @@ Table2[, 1:4] <-   parProperties(text.align = "left")
 Table2[, 5] <-   parProperties(text.align = "center")
 Table2 <-   setZebraStyle(Table2, odd = '#eeeeee', even = 'white' ) 
 
+
+########################################################################################################
+## Table 3 Sampling Effort
+########################################################################################################
+
+Table3 <-   FlexTable(sampleeffort, header.columns = TRUE)
+
+              #        cell.properties = cellProperties(padding.bottom = 3, padding.top = 3))
+
+setFlexTableBorders(Table3,inner.vertical=borderProperties(style = "none"),
+                    inner.horizontal=borderProperties(style = "none"),
+                    outer.vertical=borderProperties(style = "none"),
+                    outer.horizontal=borderProperties(),
+                    body=TRUE,header=TRUE,footer=FALSE)
+
+#spanFlexTableRows(Table2, j = "Owner", runs = as.character( UTMsampleYear$Owner ) )
+
+Table3[, 1] <-   parProperties(text.align = "left")
+Table3[, 3:7] <-   parProperties(text.align = "right")
+Table3 <-   setZebraStyle(Table3, odd = '#eeeeee', even = 'white' ) 
+
+
 ########################################################################################################
 ## Table mammals
 ########################################################################################################
@@ -158,5 +177,5 @@ reportout <- addImage(reportout, fig5, ppi = 300, width = 4.5, bookmark = "Fig5"
 
 reportout = addFlexTable(reportout, Table1, bookmark = "Table1") 
 reportout = addFlexTable(reportout, Table2, bookmark = "Table2") 
-reportout = addFlexTable(reportout, TableMammal, bookmark = "Mammals") 
+reportout = addFlexTable(reportout, Table3, bookmark = "Table3") 
   writeDoc( reportout, file = "Report2015.docx", par.properties = parProperties(text.align = "center"),)
