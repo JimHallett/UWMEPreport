@@ -154,7 +154,7 @@ reportout <- addImage(reportout, fig1, ppi = 300, bookmark = "Fig1", par.propert
 reportout <- addImage(reportout, fig2, ppi = 266, bookmark = "Fig2", par.properties = parCenter() )
 reportout <- addImage(reportout, fig3, ppi = 300, bookmark = "Fig3", par.properties = parCenter() )
 reportout <- addImage(reportout, fig4, ppi = 300,  bookmark = "Fig4", par.properties = parCenter() )
-reportout <- addImage(reportout, fig5, ppi = 300, bookmark = "Fig5", par.properties = parCenter() )
+reportout <- addImage(reportout, fig5, ppi = 300, width = 4.5, bookmark = "Fig5", par.properties = parCenter() )
 
 reportout = addFlexTable(reportout, Table1, bookmark = "Table1") 
 reportout = addFlexTable(reportout, Table2, bookmark = "Table2") 
